@@ -378,7 +378,7 @@ if (portletTitleBasedNavigation) {
 
 												<div class="col-md-4">
 													<liferay-frontend:horizontal-card
-														text="<%= fileEntry.getTitle() %>"
+														text="<%= HtmlUtil.escape(fileEntry.getTitle()) %>"
 														url="<%= rowURL %>"
 													>
 														<liferay-frontend:horizontal-card-col>
