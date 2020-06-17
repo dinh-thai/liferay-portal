@@ -123,6 +123,7 @@ public class AssetTagLocalServiceImpl extends AssetTagLocalServiceBaseImpl {
 
 		for (String name : names) {
 			name = StringUtil.toLowerCase(StringUtil.trim(name));
+
 			AssetTag tag = fetchTag(group.getGroupId(), name);
 
 			if (tag == null) {
