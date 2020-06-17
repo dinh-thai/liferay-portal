@@ -234,7 +234,7 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 				rowData.put("draggable", JournalFolderPermission.contains(permissionChecker, curFolder, ActionKeys.DELETE) || JournalFolderPermission.contains(permissionChecker, curFolder, ActionKeys.UPDATE));
 				rowData.put("folder", true);
 				rowData.put("folder-id", curFolder.getFolderId());
-				rowData.put("title", HtmlUtil.escape(curFolder.getName()));
+				rowData.put("title", curFolder.getName());
 
 				row.setData(rowData);
 				row.setPrimaryKey(String.valueOf(curFolder.getPrimaryKey()));
@@ -298,7 +298,7 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 								actionJspServletContext="<%= application %>"
 								resultRow="<%= row %>"
 								rowChecker="<%= articleSearchContainer.getRowChecker() %>"
-								text="<%= HtmlUtil.escape(curFolder.getName()) %>"
+								text="<%= curFolder.getName() %>"
 								url="<%= rowURL.toString() %>"
 							>
 								<liferay-frontend:horizontal-card-col>
