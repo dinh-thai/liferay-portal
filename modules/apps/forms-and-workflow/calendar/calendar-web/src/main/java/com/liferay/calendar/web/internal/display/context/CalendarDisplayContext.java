@@ -113,7 +113,8 @@ public class CalendarDisplayContext {
 		return otherCalendars;
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(CalendarDisplayContext.class);
+	private static final Log _log = LogFactoryUtil.getLog(
+		CalendarDisplayContext.class);
 
 	private final CalendarLocalService _calendarLocalService;
 	private final CalendarService _calendarService;
