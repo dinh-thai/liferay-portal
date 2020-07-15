@@ -37,7 +37,8 @@ public class WorkflowTaskPermissionChecker {
 		}
 
 		if (!permissionChecker.isContentReviewer(
-				permissionChecker.getCompanyId(), groupId)) {
+				permissionChecker.getCompanyId(), groupId) &&
+			!_haveAssigneePermission(workflowTask, permissionChecker)) {
 
 			return false;
 		}
@@ -88,6 +89,16 @@ public class WorkflowTaskPermissionChecker {
 		}
 
 		if (workflowTaskAssignee.getAssigneeClassPK() == userId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _haveAssigneePermission(
+		WorkflowTask workflowTask, PermissionChecker permissionChecker) {
+
+		if (permissionChecker.getUserId() == workflowTask.getAssigneeUserId()) {
 			return true;
 		}
 
