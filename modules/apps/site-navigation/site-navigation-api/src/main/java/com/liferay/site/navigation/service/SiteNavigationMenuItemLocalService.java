@@ -366,4 +366,8 @@ public interface SiteNavigationMenuItemLocalService
 	public SiteNavigationMenuItem updateSiteNavigationMenuItem(
 		SiteNavigationMenuItem siteNavigationMenuItem);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<SiteNavigationMenuItem> getSiteNavigationMenuItems(
+			long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds);
+
 }

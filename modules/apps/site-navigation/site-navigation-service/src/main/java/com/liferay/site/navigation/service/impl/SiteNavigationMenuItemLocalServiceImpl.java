@@ -212,6 +212,16 @@ public class SiteNavigationMenuItemLocalServiceImpl
 	}
 
 	@Override
+	public List<SiteNavigationMenuItem> getSiteNavigationMenuItems(
+		long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds) {
+
+		return siteNavigationMenuItemPersistence.findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemIds,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			new SiteNavigationMenuItemOrderComparator());
+	}
+
+	@Override
 	public int getSiteNavigationMenuItemsCount(long siteNavigationMenuId) {
 		return siteNavigationMenuItemPersistence.countBySiteNavigationMenuId(
 			siteNavigationMenuId);

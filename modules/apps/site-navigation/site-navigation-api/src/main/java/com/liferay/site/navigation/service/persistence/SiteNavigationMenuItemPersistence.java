@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.site.navigation.exception.NoSuchMenuItemException;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 
+import java.util.List;
+
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -1125,5 +1127,10 @@ public interface SiteNavigationMenuItemPersistence
 	 * @return the number of site navigation menu items
 	 */
 	public int countAll();
+
+	public List<SiteNavigationMenuItem> findByS_Ps(long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds,
+			int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator<SiteNavigationMenuItem>
+				orderByComparator);
 
 }

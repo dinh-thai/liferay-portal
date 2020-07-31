@@ -14,7 +14,10 @@
 
 package com.liferay.site.navigation.service;
 
+import java.util.List;
+
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 
 /**
  * Provides a wrapper for {@link SiteNavigationMenuItemLocalService}.
@@ -524,5 +527,13 @@ public class SiteNavigationMenuItemLocalServiceWrapper
 
 	private SiteNavigationMenuItemLocalService
 		_siteNavigationMenuItemLocalService;
+
+	@Override
+	public List<SiteNavigationMenuItem> getSiteNavigationMenuItems(long siteNavigationMenuId,
+			long[] parentSiteNavigationMenuItemIds) {
+
+		return _siteNavigationMenuItemLocalService.getSiteNavigationMenuItems(
+				siteNavigationMenuId, parentSiteNavigationMenuItemIds);
+	}
 
 }

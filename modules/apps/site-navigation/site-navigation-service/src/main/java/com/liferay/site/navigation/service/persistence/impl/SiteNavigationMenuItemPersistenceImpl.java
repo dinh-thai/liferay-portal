@@ -47,7 +47,7 @@ import com.liferay.site.navigation.service.persistence.impl.constants.SiteNaviga
 import java.io.Serializable;
 
 import java.lang.reflect.InvocationHandler;
-
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -2629,6 +2629,132 @@ public class SiteNavigationMenuItemPersistenceImpl
 			siteNavigationMenuId, parentSiteNavigationMenuItemId, start, end,
 			orderByComparator, true);
 	}
+	
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds,
+		int start, int end,
+		OrderByComparator<SiteNavigationMenuItem> orderByComparator) {
+
+		return findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemIds, start, end,
+			orderByComparator, true);
+	}
+
+	private List<SiteNavigationMenuItem> findByS_Ps(
+			long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds,
+			int start, int end,
+			OrderByComparator<SiteNavigationMenuItem> orderByComparator,
+			boolean useFinderCache) {
+
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByS_P;
+				finderArgs = new Object[] {
+					siteNavigationMenuId, parentSiteNavigationMenuItemIds
+				};
+			}
+		}
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindByS_P;
+			finderArgs = new Object[] {
+				siteNavigationMenuId, parentSiteNavigationMenuItemIds, start,
+				end, orderByComparator
+			};
+		}
+
+		List<SiteNavigationMenuItem> list = null;
+
+		if (useFinderCache) {
+			list = (List<SiteNavigationMenuItem>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (SiteNavigationMenuItem siteNavigationMenuItem : list) {
+					if ((siteNavigationMenuId !=
+							siteNavigationMenuItem.getSiteNavigationMenuId()) ||
+						!(Arrays.asList(parentSiteNavigationMenuItemIds).contains(
+								siteNavigationMenuItem.getParentSiteNavigationMenuItemId()))) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler sb = null;
+
+			if (orderByComparator != null) {
+				sb = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				sb = new StringBundler(4);
+			}
+
+			sb.append(_SQL_SELECT_SITENAVIGATIONMENUITEM_WHERE);
+
+			sb.append(_FINDER_COLUMN_S_P_SITENAVIGATIONMENUID_2);
+
+			sb.append(_FINDER_COLUMN_S_P_PARENTSITENAVIGATIONMENUITEMID_3);
+			
+			sb.append(StringUtil.merge(parentSiteNavigationMenuItemIds));
+
+			sb.append(")");
+
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else {
+				sb.append(SiteNavigationMenuItemModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(siteNavigationMenuId);
+
+				list = (List<SiteNavigationMenuItem>)QueryUtil.list(
+					query, getDialect(), start, end);
+
+				cacheResult(list);
+
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
+			}
+			catch (Exception exception) {
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
+
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
 
 	/**
 	 * Returns an ordered range of all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
@@ -3137,6 +3263,10 @@ public class SiteNavigationMenuItemPersistenceImpl
 	private static final String
 		_FINDER_COLUMN_S_P_PARENTSITENAVIGATIONMENUITEMID_2 =
 			"siteNavigationMenuItem.parentSiteNavigationMenuItemId = ?";
+
+	private static final String
+		_FINDER_COLUMN_S_P_PARENTSITENAVIGATIONMENUITEMID_3 =
+			"siteNavigationMenuItem.parentSiteNavigationMenuItemId IN (";
 
 	private FinderPath _finderPathWithPaginationFindByS_LikeN;
 	private FinderPath _finderPathWithPaginationCountByS_LikeN;
