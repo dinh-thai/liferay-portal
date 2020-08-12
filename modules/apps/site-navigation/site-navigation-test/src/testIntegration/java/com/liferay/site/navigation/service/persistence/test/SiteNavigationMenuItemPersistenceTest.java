@@ -274,6 +274,21 @@ public class SiteNavigationMenuItemPersistenceTest {
 	}
 
 	@Test
+	public void testCountByS_Ps() throws Exception {
+		_persistence.countByS_Ps(
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
+
+		_persistence.countByS_Ps(0L, 0L);
+	}
+
+	@Test
+	public void testCountByS_PsArrayable() throws Exception {
+		_persistence.countByS_Ps(
+			RandomTestUtil.nextLong(),
+			new long[] {RandomTestUtil.nextLong(), 0L});
+	}
+
+	@Test
 	public void testCountByS_LikeN() throws Exception {
 		_persistence.countByS_LikeN(RandomTestUtil.nextLong(), "");
 

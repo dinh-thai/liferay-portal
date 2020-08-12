@@ -381,6 +381,16 @@ public class SiteNavigationMenuItemLocalServiceUtil {
 			siteNavigationMenuId, parentSiteNavigationMenuItemId);
 	}
 
+	public static java.util.List
+		<com.liferay.site.navigation.model.SiteNavigationMenuItem>
+			getSiteNavigationMenuItems(
+				long siteNavigationMenuId,
+				long[] parentSiteNavigationMenuItemIds) {
+
+		return getService().getSiteNavigationMenuItems(
+			siteNavigationMenuId, parentSiteNavigationMenuItemIds);
+	}
+
 	/**
 	 * Returns all the site navigation menu items matching the UUID and company.
 	 *

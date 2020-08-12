@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -3101,6 +3102,870 @@ public class SiteNavigationMenuItemPersistenceImpl
 		_FINDER_COLUMN_S_P_PARENTSITENAVIGATIONMENUITEMID_2 =
 			"siteNavigationMenuItem.parentSiteNavigationMenuItemId = ?";
 
+	private FinderPath _finderPathWithPaginationFindByS_Ps;
+	private FinderPath _finderPathWithoutPaginationFindByS_Ps;
+	private FinderPath _finderPathCountByS_Ps;
+	private FinderPath _finderPathWithPaginationCountByS_Ps;
+
+	/**
+	 * Returns all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @return the matching site navigation menu items
+	 */
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId) {
+
+		return findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemId,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteNavigationMenuItemModelImpl</code>.
+	 * </p>
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param start the lower bound of the range of site navigation menu items
+	 * @param end the upper bound of the range of site navigation menu items (not inclusive)
+	 * @return the range of matching site navigation menu items
+	 */
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+		int start, int end) {
+
+		return findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemId, start, end,
+			null);
+	}
+
+	/**
+	 * Returns an ordered range of all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteNavigationMenuItemModelImpl</code>.
+	 * </p>
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param start the lower bound of the range of site navigation menu items
+	 * @param end the upper bound of the range of site navigation menu items (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching site navigation menu items
+	 */
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+		int start, int end,
+		OrderByComparator<SiteNavigationMenuItem> orderByComparator) {
+
+		return findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemId, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteNavigationMenuItemModelImpl</code>.
+	 * </p>
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param start the lower bound of the range of site navigation menu items
+	 * @param end the upper bound of the range of site navigation menu items (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching site navigation menu items
+	 */
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+		int start, int end,
+		OrderByComparator<SiteNavigationMenuItem> orderByComparator,
+		boolean useFinderCache) {
+
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByS_Ps;
+				finderArgs = new Object[] {
+					siteNavigationMenuId, parentSiteNavigationMenuItemId
+				};
+			}
+		}
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindByS_Ps;
+			finderArgs = new Object[] {
+				siteNavigationMenuId, parentSiteNavigationMenuItemId, start,
+				end, orderByComparator
+			};
+		}
+
+		List<SiteNavigationMenuItem> list = null;
+
+		if (useFinderCache) {
+			list = (List<SiteNavigationMenuItem>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (SiteNavigationMenuItem siteNavigationMenuItem : list) {
+					if ((siteNavigationMenuId !=
+							siteNavigationMenuItem.getSiteNavigationMenuId()) ||
+						(parentSiteNavigationMenuItemId !=
+							siteNavigationMenuItem.
+								getParentSiteNavigationMenuItemId())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler sb = null;
+
+			if (orderByComparator != null) {
+				sb = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				sb = new StringBundler(4);
+			}
+
+			sb.append(_SQL_SELECT_SITENAVIGATIONMENUITEM_WHERE);
+
+			sb.append(_FINDER_COLUMN_S_PS_SITENAVIGATIONMENUID_2);
+
+			sb.append(_FINDER_COLUMN_S_PS_PARENTSITENAVIGATIONMENUITEMID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else {
+				sb.append(SiteNavigationMenuItemModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(siteNavigationMenuId);
+
+				queryPos.add(parentSiteNavigationMenuItemId);
+
+				list = (List<SiteNavigationMenuItem>)QueryUtil.list(
+					query, getDialect(), start, end);
+
+				cacheResult(list);
+
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first site navigation menu item in the ordered set where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching site navigation menu item
+	 * @throws NoSuchMenuItemException if a matching site navigation menu item could not be found
+	 */
+	@Override
+	public SiteNavigationMenuItem findByS_Ps_First(
+			long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+			OrderByComparator<SiteNavigationMenuItem> orderByComparator)
+		throws NoSuchMenuItemException {
+
+		SiteNavigationMenuItem siteNavigationMenuItem = fetchByS_Ps_First(
+			siteNavigationMenuId, parentSiteNavigationMenuItemId,
+			orderByComparator);
+
+		if (siteNavigationMenuItem != null) {
+			return siteNavigationMenuItem;
+		}
+
+		StringBundler sb = new StringBundler(6);
+
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		sb.append("siteNavigationMenuId=");
+		sb.append(siteNavigationMenuId);
+
+		sb.append(", parentSiteNavigationMenuItemId=");
+		sb.append(parentSiteNavigationMenuItemId);
+
+		sb.append("}");
+
+		throw new NoSuchMenuItemException(sb.toString());
+	}
+
+	/**
+	 * Returns the first site navigation menu item in the ordered set where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching site navigation menu item, or <code>null</code> if a matching site navigation menu item could not be found
+	 */
+	@Override
+	public SiteNavigationMenuItem fetchByS_Ps_First(
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+		OrderByComparator<SiteNavigationMenuItem> orderByComparator) {
+
+		List<SiteNavigationMenuItem> list = findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemId, 0, 1,
+			orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last site navigation menu item in the ordered set where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching site navigation menu item
+	 * @throws NoSuchMenuItemException if a matching site navigation menu item could not be found
+	 */
+	@Override
+	public SiteNavigationMenuItem findByS_Ps_Last(
+			long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+			OrderByComparator<SiteNavigationMenuItem> orderByComparator)
+		throws NoSuchMenuItemException {
+
+		SiteNavigationMenuItem siteNavigationMenuItem = fetchByS_Ps_Last(
+			siteNavigationMenuId, parentSiteNavigationMenuItemId,
+			orderByComparator);
+
+		if (siteNavigationMenuItem != null) {
+			return siteNavigationMenuItem;
+		}
+
+		StringBundler sb = new StringBundler(6);
+
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		sb.append("siteNavigationMenuId=");
+		sb.append(siteNavigationMenuId);
+
+		sb.append(", parentSiteNavigationMenuItemId=");
+		sb.append(parentSiteNavigationMenuItemId);
+
+		sb.append("}");
+
+		throw new NoSuchMenuItemException(sb.toString());
+	}
+
+	/**
+	 * Returns the last site navigation menu item in the ordered set where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching site navigation menu item, or <code>null</code> if a matching site navigation menu item could not be found
+	 */
+	@Override
+	public SiteNavigationMenuItem fetchByS_Ps_Last(
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+		OrderByComparator<SiteNavigationMenuItem> orderByComparator) {
+
+		int count = countByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<SiteNavigationMenuItem> list = findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemId, count - 1,
+			count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the site navigation menu items before and after the current site navigation menu item in the ordered set where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * @param siteNavigationMenuItemId the primary key of the current site navigation menu item
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next site navigation menu item
+	 * @throws NoSuchMenuItemException if a site navigation menu item with the primary key could not be found
+	 */
+	@Override
+	public SiteNavigationMenuItem[] findByS_Ps_PrevAndNext(
+			long siteNavigationMenuItemId, long siteNavigationMenuId,
+			long parentSiteNavigationMenuItemId,
+			OrderByComparator<SiteNavigationMenuItem> orderByComparator)
+		throws NoSuchMenuItemException {
+
+		SiteNavigationMenuItem siteNavigationMenuItem = findByPrimaryKey(
+			siteNavigationMenuItemId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SiteNavigationMenuItem[] array = new SiteNavigationMenuItemImpl[3];
+
+			array[0] = getByS_Ps_PrevAndNext(
+				session, siteNavigationMenuItem, siteNavigationMenuId,
+				parentSiteNavigationMenuItemId, orderByComparator, true);
+
+			array[1] = siteNavigationMenuItem;
+
+			array[2] = getByS_Ps_PrevAndNext(
+				session, siteNavigationMenuItem, siteNavigationMenuId,
+				parentSiteNavigationMenuItemId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception exception) {
+			throw processException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected SiteNavigationMenuItem getByS_Ps_PrevAndNext(
+		Session session, SiteNavigationMenuItem siteNavigationMenuItem,
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+		OrderByComparator<SiteNavigationMenuItem> orderByComparator,
+		boolean previous) {
+
+		StringBundler sb = null;
+
+		if (orderByComparator != null) {
+			sb = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			sb = new StringBundler(4);
+		}
+
+		sb.append(_SQL_SELECT_SITENAVIGATIONMENUITEM_WHERE);
+
+		sb.append(_FINDER_COLUMN_S_PS_SITENAVIGATIONMENUID_2);
+
+		sb.append(_FINDER_COLUMN_S_PS_PARENTSITENAVIGATIONMENUITEMID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				sb.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(WHERE_GREATER_THAN);
+					}
+					else {
+						sb.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			sb.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(ORDER_BY_ASC);
+					}
+					else {
+						sb.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			sb.append(SiteNavigationMenuItemModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = sb.toString();
+
+		Query query = session.createQuery(sql);
+
+		query.setFirstResult(0);
+		query.setMaxResults(2);
+
+		QueryPos queryPos = QueryPos.getInstance(query);
+
+		queryPos.add(siteNavigationMenuId);
+
+		queryPos.add(parentSiteNavigationMenuItemId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						siteNavigationMenuItem)) {
+
+				queryPos.add(orderByConditionValue);
+			}
+		}
+
+		List<SiteNavigationMenuItem> list = query.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteNavigationMenuItemModelImpl</code>.
+	 * </p>
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemIds the parent site navigation menu item IDs
+	 * @return the matching site navigation menu items
+	 */
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds) {
+
+		return findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemIds,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteNavigationMenuItemModelImpl</code>.
+	 * </p>
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemIds the parent site navigation menu item IDs
+	 * @param start the lower bound of the range of site navigation menu items
+	 * @param end the upper bound of the range of site navigation menu items (not inclusive)
+	 * @return the range of matching site navigation menu items
+	 */
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds,
+		int start, int end) {
+
+		return findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemIds, start, end,
+			null);
+	}
+
+	/**
+	 * Returns an ordered range of all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteNavigationMenuItemModelImpl</code>.
+	 * </p>
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemIds the parent site navigation menu item IDs
+	 * @param start the lower bound of the range of site navigation menu items
+	 * @param end the upper bound of the range of site navigation menu items (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching site navigation menu items
+	 */
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds,
+		int start, int end,
+		OrderByComparator<SiteNavigationMenuItem> orderByComparator) {
+
+		return findByS_Ps(
+			siteNavigationMenuId, parentSiteNavigationMenuItemIds, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;, optionally using the finder cache.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>SiteNavigationMenuItemModelImpl</code>.
+	 * </p>
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @param start the lower bound of the range of site navigation menu items
+	 * @param end the upper bound of the range of site navigation menu items (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching site navigation menu items
+	 */
+	@Override
+	public List<SiteNavigationMenuItem> findByS_Ps(
+		long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds,
+		int start, int end,
+		OrderByComparator<SiteNavigationMenuItem> orderByComparator,
+		boolean useFinderCache) {
+
+		if (parentSiteNavigationMenuItemIds == null) {
+			parentSiteNavigationMenuItemIds = new long[0];
+		}
+		else if (parentSiteNavigationMenuItemIds.length > 1) {
+			parentSiteNavigationMenuItemIds = ArrayUtil.sortedUnique(
+				parentSiteNavigationMenuItemIds);
+		}
+
+		if (parentSiteNavigationMenuItemIds.length == 1) {
+			return findByS_Ps(
+				siteNavigationMenuId, parentSiteNavigationMenuItemIds[0], start,
+				end, orderByComparator);
+		}
+
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			if (useFinderCache) {
+				finderArgs = new Object[] {
+					siteNavigationMenuId,
+					StringUtil.merge(parentSiteNavigationMenuItemIds)
+				};
+			}
+		}
+		else if (useFinderCache) {
+			finderArgs = new Object[] {
+				siteNavigationMenuId,
+				StringUtil.merge(parentSiteNavigationMenuItemIds), start, end,
+				orderByComparator
+			};
+		}
+
+		List<SiteNavigationMenuItem> list = null;
+
+		if (useFinderCache) {
+			list = (List<SiteNavigationMenuItem>)finderCache.getResult(
+				_finderPathWithPaginationFindByS_Ps, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (SiteNavigationMenuItem siteNavigationMenuItem : list) {
+					if ((siteNavigationMenuId !=
+							siteNavigationMenuItem.getSiteNavigationMenuId()) ||
+						!ArrayUtil.contains(
+							parentSiteNavigationMenuItemIds,
+							siteNavigationMenuItem.
+								getParentSiteNavigationMenuItemId())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler sb = new StringBundler();
+
+			sb.append(_SQL_SELECT_SITENAVIGATIONMENUITEM_WHERE);
+
+			sb.append(_FINDER_COLUMN_S_PS_SITENAVIGATIONMENUID_2);
+
+			if (parentSiteNavigationMenuItemIds.length > 0) {
+				sb.append("(");
+
+				sb.append(_FINDER_COLUMN_S_PS_PARENTSITENAVIGATIONMENUITEMID_7);
+
+				sb.append(StringUtil.merge(parentSiteNavigationMenuItemIds));
+
+				sb.append(")");
+
+				sb.append(")");
+			}
+
+			sb.setStringAt(
+				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else {
+				sb.append(SiteNavigationMenuItemModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(siteNavigationMenuId);
+
+				list = (List<SiteNavigationMenuItem>)QueryUtil.list(
+					query, getDialect(), start, end);
+
+				cacheResult(list);
+
+				if (useFinderCache) {
+					finderCache.putResult(
+						_finderPathWithPaginationFindByS_Ps, finderArgs, list);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Removes all the site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63; from the database.
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 */
+	@Override
+	public void removeByS_Ps(
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId) {
+
+		for (SiteNavigationMenuItem siteNavigationMenuItem :
+				findByS_Ps(
+					siteNavigationMenuId, parentSiteNavigationMenuItemId,
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+			remove(siteNavigationMenuItem);
+		}
+	}
+
+	/**
+	 * Returns the number of site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = &#63;.
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemId the parent site navigation menu item ID
+	 * @return the number of matching site navigation menu items
+	 */
+	@Override
+	public int countByS_Ps(
+		long siteNavigationMenuId, long parentSiteNavigationMenuItemId) {
+
+		FinderPath finderPath = _finderPathCountByS_Ps;
+
+		Object[] finderArgs = new Object[] {
+			siteNavigationMenuId, parentSiteNavigationMenuItemId
+		};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler sb = new StringBundler(3);
+
+			sb.append(_SQL_COUNT_SITENAVIGATIONMENUITEM_WHERE);
+
+			sb.append(_FINDER_COLUMN_S_PS_SITENAVIGATIONMENUID_2);
+
+			sb.append(_FINDER_COLUMN_S_PS_PARENTSITENAVIGATIONMENUITEMID_2);
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(siteNavigationMenuId);
+
+				queryPos.add(parentSiteNavigationMenuItemId);
+
+				count = (Long)query.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	/**
+	 * Returns the number of site navigation menu items where siteNavigationMenuId = &#63; and parentSiteNavigationMenuItemId = any &#63;.
+	 *
+	 * @param siteNavigationMenuId the site navigation menu ID
+	 * @param parentSiteNavigationMenuItemIds the parent site navigation menu item IDs
+	 * @return the number of matching site navigation menu items
+	 */
+	@Override
+	public int countByS_Ps(
+		long siteNavigationMenuId, long[] parentSiteNavigationMenuItemIds) {
+
+		if (parentSiteNavigationMenuItemIds == null) {
+			parentSiteNavigationMenuItemIds = new long[0];
+		}
+		else if (parentSiteNavigationMenuItemIds.length > 1) {
+			parentSiteNavigationMenuItemIds = ArrayUtil.sortedUnique(
+				parentSiteNavigationMenuItemIds);
+		}
+
+		Object[] finderArgs = new Object[] {
+			siteNavigationMenuId,
+			StringUtil.merge(parentSiteNavigationMenuItemIds)
+		};
+
+		Long count = (Long)finderCache.getResult(
+			_finderPathWithPaginationCountByS_Ps, finderArgs, this);
+
+		if (count == null) {
+			StringBundler sb = new StringBundler();
+
+			sb.append(_SQL_COUNT_SITENAVIGATIONMENUITEM_WHERE);
+
+			sb.append(_FINDER_COLUMN_S_PS_SITENAVIGATIONMENUID_2);
+
+			if (parentSiteNavigationMenuItemIds.length > 0) {
+				sb.append("(");
+
+				sb.append(_FINDER_COLUMN_S_PS_PARENTSITENAVIGATIONMENUITEMID_7);
+
+				sb.append(StringUtil.merge(parentSiteNavigationMenuItemIds));
+
+				sb.append(")");
+
+				sb.append(")");
+			}
+
+			sb.setStringAt(
+				removeConjunction(sb.stringAt(sb.index() - 1)), sb.index() - 1);
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(siteNavigationMenuId);
+
+				count = (Long)query.uniqueResult();
+
+				finderCache.putResult(
+					_finderPathWithPaginationCountByS_Ps, finderArgs, count);
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_S_PS_SITENAVIGATIONMENUID_2 =
+		"siteNavigationMenuItem.siteNavigationMenuId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_S_PS_PARENTSITENAVIGATIONMENUITEMID_2 =
+			"siteNavigationMenuItem.parentSiteNavigationMenuItemId = ?";
+
+	private static final String
+		_FINDER_COLUMN_S_PS_PARENTSITENAVIGATIONMENUITEMID_7 =
+			"siteNavigationMenuItem.parentSiteNavigationMenuItemId IN (";
+
 	private FinderPath _finderPathWithPaginationFindByS_LikeN;
 	private FinderPath _finderPathWithPaginationCountByS_LikeN;
 
@@ -4096,6 +4961,16 @@ public class SiteNavigationMenuItemPersistenceImpl
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindByS_P, args);
 
+			args = new Object[] {
+				siteNavigationMenuItemModelImpl.getSiteNavigationMenuId(),
+				siteNavigationMenuItemModelImpl.
+					getParentSiteNavigationMenuItemId()
+			};
+
+			finderCache.removeResult(_finderPathCountByS_Ps, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByS_Ps, args);
+
 			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
@@ -4220,6 +5095,32 @@ public class SiteNavigationMenuItemPersistenceImpl
 				finderCache.removeResult(_finderPathCountByS_P, args);
 				finderCache.removeResult(
 					_finderPathWithoutPaginationFindByS_P, args);
+			}
+
+			if ((siteNavigationMenuItemModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByS_Ps.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					siteNavigationMenuItemModelImpl.
+						getOriginalSiteNavigationMenuId(),
+					siteNavigationMenuItemModelImpl.
+						getOriginalParentSiteNavigationMenuItemId()
+				};
+
+				finderCache.removeResult(_finderPathCountByS_Ps, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByS_Ps, args);
+
+				args = new Object[] {
+					siteNavigationMenuItemModelImpl.getSiteNavigationMenuId(),
+					siteNavigationMenuItemModelImpl.
+						getParentSiteNavigationMenuItemId()
+				};
+
+				finderCache.removeResult(_finderPathCountByS_Ps, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByS_Ps, args);
 			}
 		}
 
@@ -4630,6 +5531,33 @@ public class SiteNavigationMenuItemPersistenceImpl
 
 		_finderPathCountByS_P = new FinderPath(
 			Long.class, FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByS_P",
+			new String[] {Long.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByS_Ps = new FinderPath(
+			SiteNavigationMenuItemImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByS_Ps",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByS_Ps = new FinderPath(
+			SiteNavigationMenuItemImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByS_Ps",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			SiteNavigationMenuItemModelImpl.
+				SITENAVIGATIONMENUID_COLUMN_BITMASK |
+			SiteNavigationMenuItemModelImpl.
+				PARENTSITENAVIGATIONMENUITEMID_COLUMN_BITMASK);
+
+		_finderPathCountByS_Ps = new FinderPath(
+			Long.class, FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByS_Ps",
+			new String[] {Long.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationCountByS_Ps = new FinderPath(
+			Long.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByS_Ps",
 			new String[] {Long.class.getName(), Long.class.getName()});
 
 		_finderPathWithPaginationFindByS_LikeN = new FinderPath(

@@ -95,6 +95,10 @@
 			<finder-column name="siteNavigationMenuId" />
 			<finder-column name="parentSiteNavigationMenuItemId" />
 		</finder>
+		<finder name="S_Ps" return-type="Collection">
+			<finder-column name="siteNavigationMenuId" />
+			<finder-column arrayable-operator="OR" name="parentSiteNavigationMenuItemId" />
+		</finder>
 		<finder name="S_LikeN" return-type="Collection">
 			<finder-column name="siteNavigationMenuId" />
 			<finder-column comparator="LIKE" name="name" />

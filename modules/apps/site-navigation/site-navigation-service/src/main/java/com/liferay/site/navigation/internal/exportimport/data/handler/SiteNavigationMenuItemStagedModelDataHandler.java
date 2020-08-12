@@ -29,7 +29,10 @@ import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 
+import com.liferay.portal.kernel.util.GetterUtil;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -202,7 +205,56 @@ public class SiteNavigationMenuItemStagedModelDataHandler
 
 		portletDataContext.importClassedModel(
 			siteNavigationMenuItem, importedSiteNavigationMenuItem);
+
+		_checkImportParentSiteNavigationMenuItemIds(
+				siteNavigationMenuId, portletDataContext);
 	}
+
+	private void _checkImportParentSiteNavigationMenuItemIds(
+			long siteNavigationMenuId, PortletDataContext portletDataContext) {
+
+			Map<Long, Long> siteNavigationMenuItemIds =
+				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+					SiteNavigationMenuItem.class);
+
+			if ((siteNavigationMenuItemIds != null) &&
+				!siteNavigationMenuItemIds.isEmpty()) {
+
+				Set<Long> ids = siteNavigationMenuItemIds.keySet();
+
+				long[] parentSiteNavigationMenuItemIds = GetterUtil.getLongValues(
+					ids.toArray(new Long[siteNavigationMenuItemIds.size()]));
+
+				List<SiteNavigationMenuItem> siteNavigationMenuItems =
+					_siteNavigationMenuItemLocalService.getSiteNavigationMenuItems(
+						siteNavigationMenuId, parentSiteNavigationMenuItemIds);
+
+				if ((siteNavigationMenuItems != null) &&
+					!siteNavigationMenuItems.isEmpty()) {
+
+					long updateParentSiteNavigationMenuItemId = 0;
+
+					for (SiteNavigationMenuItem updateSiteNavigationMenuItem :
+							siteNavigationMenuItems) {
+
+						updateParentSiteNavigationMenuItemId = MapUtil.getLong(
+							siteNavigationMenuItemIds,
+							updateSiteNavigationMenuItem.
+								getParentSiteNavigationMenuItemId(),
+							updateSiteNavigationMenuItem.
+								getParentSiteNavigationMenuItemId());
+
+						updateSiteNavigationMenuItem.
+							setParentSiteNavigationMenuItemId(
+								updateParentSiteNavigationMenuItemId);
+
+						_siteNavigationMenuItemLocalService.
+							updateSiteNavigationMenuItem(
+								updateSiteNavigationMenuItem);
+					}
+				}
+			}
+		}
 
 	@Override
 	protected StagedModelRepository<SiteNavigationMenuItem>
