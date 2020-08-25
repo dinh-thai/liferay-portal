@@ -25,6 +25,8 @@
 
 	var STR_SPACE = ' ';
 
+	var NAME_MAX_LENGTH = 75;
+
 	var TPL_REPLACE_HTML =
 		'<span class="' + CSS_LFR_AC_CONTENT + '">{html}</span>';
 
@@ -162,9 +164,17 @@
 			var instance = this;
 
 			var caretContainer = instance._getCaretContainer();
-			var caretIndex = instance._getCaretIndex();
 
-			var query = caretContainer.getText().substring(0, caretIndex.start);
+			var textLength = caretContainer.getText().length;
+
+			var query = caretContainer
+				.getText()
+				.substring(
+					0,
+					textLength && textLength <= NAME_MAX_LENGTH
+						? textLength
+						: NAME_MAX_LENGTH
+				);
 
 			var triggerContainer = caretContainer;
 
