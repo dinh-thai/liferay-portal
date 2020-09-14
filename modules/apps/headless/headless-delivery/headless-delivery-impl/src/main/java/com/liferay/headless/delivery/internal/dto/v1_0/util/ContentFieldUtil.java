@@ -242,6 +242,7 @@ public class ContentFieldUtil {
 									_toStructuredContent(
 										classPK, dtoConverterContext);
 								id = journalArticle.getResourcePrimKey();
+								key = journalArticle.getArticleId();
 								title = journalArticle.getTitle();
 							}
 						};

@@ -142,6 +142,32 @@ public class StructuredContentLink {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Long id;
 
+	@Schema(description = "The resource's key.")
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	@JsonIgnore
+	public void setKey(UnsafeSupplier<String, Exception> keyUnsafeSupplier) {
+		try {
+			key = keyUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField(description = "The resource's key.")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String key;
+
 	@Schema(description = "The resource's title.")
 	public String getTitle() {
 		return title;
