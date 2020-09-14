@@ -128,6 +128,7 @@ public class StructuredContentDTOConverter
 					journalArticle.getCompanyId(),
 					dtoConverterContext.getLocale());
 				dateCreated = journalArticle.getCreateDate();
+				dateExpired = journalArticle.getExpirationDate();
 				dateModified = journalArticle.getModifiedDate();
 				datePublished = journalArticle.getDisplayDate();
 				description = journalArticle.getDescription(

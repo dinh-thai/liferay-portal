@@ -331,6 +331,34 @@ public class StructuredContent {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Date dateCreated;
 
+	@Schema(description = "The structured content's expired date.")
+	public Date getDateExpired() {
+		return dateExpired;
+	}
+
+	public void setDateExpired(Date dateExpired) {
+		this.dateExpired = dateExpired;
+	}
+
+	@JsonIgnore
+	public void setDateExpired(
+		UnsafeSupplier<Date, Exception> dateExpiredUnsafeSupplier) {
+
+		try {
+			dateExpired = dateExpiredUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField(description = "The structured content's expired date.")
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Date dateExpired;
+
 	@Schema(
 		description = "The last time any field of the structured content was changed."
 	)
