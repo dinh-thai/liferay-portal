@@ -14,6 +14,7 @@
 
 package com.liferay.layout.admin.web.internal.exportimport.data.handler;
 
+import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
 import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -22,6 +23,9 @@ import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.staged.model.repository.StagedModelRepository;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
@@ -112,6 +116,26 @@ public class LayoutPageTemplateStructureRelStagedModelDataHandler
 		importedLayoutPageTemplateStructureRel.setSegmentsExperienceId(
 			segmentsExperienceId);
 
+		String data = layoutPageTemplateStructureRel.getData();
+		long targetGroupId = portletDataContext.getScopeGroupId();
+
+		String newData = data.replaceAll(
+			String.format(
+				"/documents/%d/", portletDataContext.getSourceGroupId()),
+			String.format("/documents/%d/", targetGroupId));
+
+		try {
+			_dlReferencesExportImportContentProcessor.validateContentReferences(
+				targetGroupId, newData);
+
+			importedLayoutPageTemplateStructureRel.setData(newData);
+		}
+		catch (PortalException portalException) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(portalException.getMessage());
+			}
+		}
+
 		LayoutPageTemplateStructureRel existingLayoutPageTemplateStructureRel =
 			_stagedModelRepository.fetchStagedModelByUuidAndGroupId(
 				layoutPageTemplateStructureRel.getUuid(),
@@ -148,6 +172,13 @@ public class LayoutPageTemplateStructureRelStagedModelDataHandler
 
 		return _stagedModelRepository;
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutPageTemplateStructureRelStagedModelDataHandler.class);
+
+	@Reference(target = "(content.processor.type=DLReferences)")
+	private ExportImportContentProcessor<String>
+		_dlReferencesExportImportContentProcessor;
 
 	@Reference
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
